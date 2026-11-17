@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f2f2ea">
+  <meta name="description" content="Pilota un cohete, descubre la física de su vuelo y regresa a los brazos de una torre de captura. Un juego educativo de vuelo libre.">
+  <title>SpaceE — La física de volver</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2317242d'/%3E%3Cpath d='M20 45L43 18M23 19h21v22' fill='none' stroke='%23c9f278' stroke-width='6'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="/styles.css">
+  <script type="module" src="/src/main.js"></script>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="site-header">
+      <a class="brand" href="/" aria-label="SpaceE, inicio"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M6 26 26 6M9 6h17v17"/></svg>space<span>e</span><span class="brand-dot">.</span></a>
+      <div class="header-note"><span class="status-dot"></span> LABORATORIO DE VUELO <span class="version">VOL. 01</span></div>
+      <button class="text-button" id="about-button" aria-haspopup="dialog">El modelo <span aria-hidden="true">↗</span></button>
+    </header>
+
+    <main>
+      <section class="intro" aria-labelledby="page-title">
+        <div><p class="eyebrow">EXPLORA. EXPERIMENTA. VUELVE.</p><h1 id="page-title">La física de volver<span>.</span></h1><p class="intro-copy">Tú llevas el cohete. La física cuenta lo que sucede.</p></div>
+        <div class="mission-select" role="group" aria-label="Escenario de vuelo">
+          <button class="mode-button selected" data-mode="mission" aria-pressed="true"><span class="mode-number">01</span><span>Vuelo completo<small>Despegue + captura</small></span></button>
+          <button class="mode-button" data-mode="practice" aria-pressed="false"><span class="mode-number">02</span><span>Aproximación<small>Práctica de regreso</small></span></button>
+        </div>
+      </section>
+
+      <div class="flight-layout">
+        <section class="flight-panel" aria-label="Simulación de vuelo">
+          <div class="flight-toolbar"><div class="live-tag"><span class="status-dot"></span><span id="flight-status">EN PLATAFORMA</span></div><div class="flight-actions"><button id="vector-button" class="icon-text active" aria-pressed="true" title="Mostrar vectores de fuerza (V)"><span aria-hidden="true">↗</span> Fuerzas</button><button id="pause-button" class="icon-text" aria-label="Pausar vuelo (P)"><span id="pause-icon" aria-hidden="true">Ⅱ</span><span id="pause-label">Pausar</span></button><button id="reset-button" class="icon-text" aria-label="Reiniciar vuelo (R)"><span aria-hidden="true">↺</span><span class="reset-label">Reiniciar</span></button></div></div>
+
+          <div class="viewport" id="viewport">
+            <canvas id="flight-canvas" aria-label="Cohete controlable en un paisaje costero con una torre y brazos de captura. La telemetría y las explicaciones están disponibles debajo y al lado del vuelo."></canvas>
+            <div class="viewport-top"><div class="mission-caption"><span class="mini-label">MISIÓN / <span id="mode-name">VUELO COMPLETO</span></span><p id="mission-objective">Supera los 160 m y regresa a los brazos.</p></div><div class="clock" aria-label="Tiempo de vuelo"><span class="mini-label">TIEMPO</span><span id="flight-clock">T+ 00:00.0</span></div></div>
+            <div id="altitude-badge" class="altitude-badge"><span class="status-dot"></span><span id="milestone-label">COTA DE MISIÓN · 160 m</span></div>
+            <div class="canvas-legend" aria-label="Leyenda de los vectores"><span><i class="thrust-dot"></i>Empuje</span><span><i class="weight-dot"></i>Peso</span><span><i class="drag-dot"></i>Aire</span><small>Longitud proporcional a la fuerza</small></div>
+            <div class="viewport-label">COSTA DE PRUEBAS <span>04° N / SIMULACIÓN</span></div>
+            <div class="pause-overlay" id="pause-overlay" hidden><span id="pause-eyebrow">SIMULACIÓN EN PAUSA</span><strong id="pause-title">Un momento para entender.</strong><p id="pause-copy">La física y el combustible están detenidos.</p><button class="primary-button" id="resume-button"><span id="resume-label">Continuar vuelo</span><span aria-hidden="true">→</span></button></div>
+            <div class="result-overlay" id="result-overlay" hidden role="status" aria-live="polite"><div class="result-card"><span class="eyebrow" id="result-eyebrow">MISIÓN COMPLETADA</span><h2 id="result-title">En buenas manos.</h2><p id="result-description"></p><div class="result-stats" id="result-stats"></div><button id="retry-button" class="primary-button">Otro vuelo <span aria-hidden="true">↗</span></button><button id="inspect-result" class="text-button">Observar el encuentro</button><button id="practice-button" class="text-button">Practicar aproximación</button></div></div>
+          </div>
+
+          <div class="telemetry" aria-label="Telemetría en tiempo real">
+            <div><span class="metric-label">ALTITUD <small>centro</small></span><strong><span id="altitude">12.0</span><small>m</small></strong><span id="altitude-note" class="metric-note">sobre el suelo</span></div>
+            <div><span class="metric-label">VELOCIDAD VERTICAL</span><strong><span id="vertical-speed">0.0</span><small>m/s</small></strong><span id="vertical-note" class="metric-note">en reposo</span></div>
+            <div><span class="metric-label">ACELERACIÓN VERTICAL</span><strong><span id="acceleration">0.0</span><small>m/s²</small></strong><span class="metric-note">+ arriba / − abajo</span></div>
+            <div><span class="metric-label">COMBUSTIBLE</span><strong><span id="fuel">100</span><small>%</small></strong><div class="fuel-track"><i id="fuel-fill"></i></div></div>
+          </div>
+
+          <div class="pilot-controls">
+            <div class="throttle-control"><div class="control-title"><label for="throttle">EMPUJE</label><span><b id="throttle-value">0</b> % <small id="thrust-value">/ 0.0 kN</small></span></div><input id="throttle" type="range" min="0" max="100" step="1" value="0" aria-label="Potencia del motor en porcentaje"><div class="range-labels"><span>APAGADO</span><span>MÁXIMO</span></div></div>
+            <div class="attitude-control"><div class="control-title"><span>ORIENTACIÓN</span><span id="angle-value">0.0°</span></div><div class="orientation-buttons"><button class="hold-button" data-control="left" aria-label="Inclinar a la izquierda, mantener presionado">↶ <kbd>A</kbd></button><div class="attitude-icon" aria-hidden="true"><svg viewBox="0 0 40 40"><path d="M3 26h34M20 6v27"/><path id="attitude-needle" d="M20 7v24m-5-6 5 6 5-6"/></svg></div><button class="hold-button" data-control="right" aria-label="Inclinar a la derecha, mantener presionado"><kbd>D</kbd> ↷</button></div></div>
+            <div class="keyboard-guide"><span class="control-title">A TU MANDO</span><p><kbd>W</kbd> <kbd>S</kbd> o <kbd>↑</kbd> <kbd>↓</kbd> empuje</p><p><kbd>A</kbd> <kbd>D</kbd> o <kbd>←</kbd> <kbd>→</kbd> orientar</p><p><kbd>X</kbd> apagar <span>·</span> <kbd>P</kbd> pausa</p></div>
+          </div>
+        </section>
+
+        <aside class="science-panel" aria-label="Física y condiciones de captura">
+          <section class="physics-card"><div class="section-label"><span class="status-dot"></span> FÍSICA DEL INSTANTE <span id="lesson-number">01</span></div><div class="lesson-symbol" id="lesson-symbol" aria-hidden="true">F</div><p class="lesson-category" id="lesson-category">ACCIÓN Y REACCIÓN</p><h2 id="lesson-title">El principio de un viaje.</h2><p class="lesson-copy" id="lesson-copy"></p><div class="equation"><span id="lesson-equation">F = m · a</span><small id="equation-caption">Segunda ley de Newton</small></div><div class="force-list"><div><span><i class="thrust-dot"></i>Empuje vertical</span><strong id="force-thrust">0.0 kN</strong></div><div><span><i class="weight-dot"></i>Peso</span><strong id="force-weight">29.4 kN</strong></div><div><span><i class="drag-dot"></i>Resistencia vertical</span><strong id="force-drag">0.0 kN</strong></div><div id="normal-row"><span><i class="normal-dot"></i><span id="normal-label">Apoyo del suelo</span></span><strong id="force-normal">29.4 kN</strong></div></div><p class="physics-footnote" id="physics-footnote"></p></section>
+          <section class="capture-card"><div class="section-label">ENCUENTRO CON LA TORRE <span aria-hidden="true">⌖</span></div><div class="capture-heading"><h2>Una captura suave.</h2><span>100 m</span></div><p>Condiciones al cruzar los brazos en descenso.</p><dl class="capture-conditions"><div><dt>Desviación horizontal</dt><dd><span id="target-offset">−75.0 m</span><small>± 8 m</small></dd></div><div><dt>Velocidad vertical</dt><dd><span id="target-speed">0.0 m/s</span><small>↓ 0–6 m/s</small></dd></div><div><dt>Velocidad horizontal</dt><dd><span id="target-horizontal">0.0 m/s</span><small>≤ 3.5 m/s</small></dd></div><div><dt>Inclinación</dt><dd><span id="target-angle">0.0°</span><small>± 12°</small></dd></div><div><dt>Velocidad de giro</dt><dd><span id="target-rotation">0.0°/s</span><small>≤ 20°/s</small></dd></div></dl><div class="flight-detail"><span>MASA <b id="mass">3 000 kg</b></span><span>FLUJO <b id="flow">0.0 kg/s</b></span></div></section>
+        </aside>
+      </div>
+
+      <section class="flight-notebook" aria-label="Bitácora del vuelo"><div><span class="eyebrow">LO QUE TU VUELO NOS CUENTA</span><h2>Bitácora de física<span> / </span><span id="event-count">01</span></h2></div><ol id="event-list"><li><time>00:00</time><span>En plataforma. El suelo equilibra el peso del cohete.</span></li></ol></section>
+    </main>
+    <footer><span>spacee. <span class="footer-muted">Aprender también es experimentar.</span></span><span>Física simplificada · Parámetros de juego <button class="text-button" id="footer-about">Acerca del modelo ↗</button></span></footer>
+  </div>
+
+  <dialog id="about-dialog" aria-labelledby="about-title"><button id="close-about" class="dialog-close" aria-label="Cerrar información">×</button><p class="eyebrow">UN MODELO PARA EXPERIMENTAR</p><h2 id="about-title">Física real.<br>Escala de juego.</h2><p>Inspirado en el concepto de captura de un propulsor reutilizable. Este es un simulador educativo independiente; no reproduce un vehículo, una trayectoria ni parámetros propietarios de SpaceX.</p><dl class="model-facts"><div><dt>Gravedad elegida</dt><dd>9.81 m/s², constante</dd></div><div><dt>Masa seca / combustible inicial</dt><dd>1 800 kg / 1 200 kg</dd></div><div><dt>Empuje máximo / impulso específico</dt><dd>60 kN / 230 s</dd></div><div><dt>Consumo</dt><dd>ṁ = T / (Isp · g₀)</dd></div><div><dt>Resistencia del aire</dt><dd>F = −½ρCdA |v| v</dd></div></dl><p>La posición se integra con un paso fijo de 1/120 s. El combustible reduce la masa; la gravedad, el empuje orientado y la resistencia del aire determinan la aceleración. La densidad disminuye con la altitud. La telemetría toma el centro del cohete como referencia.</p><p>El control de actitud usa propulsores idealizados con amortiguación al soltar el control y consumo despreciado. Una guía mantiene el cohete vertical en la plataforma hasta despegar. La captura detiene el cohete al cumplir los límites; no simula esfuerzos estructurales.</p><p>No hay viento, sustentación, calentamiento ni variación de la gravedad. Los valores, dimensiones y límites son decisiones para el juego. La práctica comienza a 143 m, bajando a 4 m/s, con 800 kg de combustible y 42 % de potencia.</p><p class="model-tip">Controles: W/S o ↑/↓ regulan potencia; A/D o ←/→ orientan; X apaga el motor; P o espacio pausa; R reinicia; V muestra fuerzas. El deslizador y los botones de giro funcionan también en pantalla táctil.</p><button class="primary-button" id="about-done">Volver al laboratorio →</button></dialog>
+</body>
+</html>
