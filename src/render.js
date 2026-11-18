@@ -108,7 +108,7 @@ export class FlightRenderer {
     c.setLineDash([9,14]);this.line(0,roadY,w,roadY,'#b8c7a82a');c.setLineDash([]);
   }
   drawPad() {
-    const c=this.ctx,p=this.point(-75,0),z=this.scale;
+    const c=this.ctx,p=this.point(CONFIG.launchX,0),z=this.scale;
     c.fillStyle='#172f31';c.fillRect(p.x-17*z,p.y,34*z,3*z);
     c.fillStyle='#76897b';c.fillRect(p.x-11*z,p.y-1.2*z,22*z,1.5*z);
     this.line(p.x-9*z,p.y-1.3*z,p.x+9*z,p.y-1.3*z,'#b5bea144');

@@ -24,6 +24,7 @@
         <div class="mission-select" role="group" aria-label="Escenario de vuelo">
           <button class="mode-button selected" data-mode="mission" aria-pressed="true"><span class="mode-number">01</span><span>Vuelo completo<small>Despegue + captura</small></span></button>
           <button class="mode-button" data-mode="practice" aria-pressed="false"><span class="mode-number">02</span><span>Aproximación<small>Práctica de regreso</small></span></button>
+          <button class="mode-button" data-mode="automatic" aria-pressed="false"><span>Automático<small>Despegue + captura</small></span></button>
         </div>
       </section>
 
@@ -37,8 +38,14 @@
             <div id="altitude-badge" class="altitude-badge"><span class="status-dot"></span><span id="milestone-label">COTA DE MISIÓN · 160 m</span></div>
             <div class="canvas-legend" aria-label="Leyenda de los vectores"><span><i class="thrust-dot"></i>Empuje</span><span><i class="weight-dot"></i>Peso</span><span><i class="drag-dot"></i>Aire</span><small>Longitud proporcional a la fuerza</small></div>
             <div class="viewport-label">COSTA DE PRUEBAS <span>04° N / SIMULACIÓN</span></div>
-            <div class="pause-overlay" id="pause-overlay" hidden><span id="pause-eyebrow">SIMULACIÓN EN PAUSA</span><strong id="pause-title">Un momento para entender.</strong><p id="pause-copy">La física y el combustible están detenidos.</p><button class="primary-button" id="resume-button"><span id="resume-label">Continuar vuelo</span><span aria-hidden="true">→</span></button></div>
-            <div class="result-overlay" id="result-overlay" hidden role="status" aria-live="polite"><div class="result-card"><span class="eyebrow" id="result-eyebrow">MISIÓN COMPLETADA</span><h2 id="result-title">En buenas manos.</h2><p id="result-description"></p><div class="result-stats" id="result-stats"></div><button id="retry-button" class="primary-button">Otro vuelo <span aria-hidden="true">↗</span></button><button id="inspect-result" class="text-button">Observar el encuentro</button><button id="practice-button" class="text-button">Practicar aproximación</button></div></div>
+            <div class="pause-overlay" id="pause-overlay" hidden>
+              <span id="pause-eyebrow">SIMULACIÓN EN PAUSA</span>
+              <strong id="pause-title">Un momento para entender.</strong>
+              <p id="pause-copy">La física y el combustible están detenidos.</p>
+              <button class="primary-button" id="resume-button"><span id="resume-label">Continuar vuelo</span><span aria-hidden="true">→</span></button>
+              <button class="primary-button" id="overlay-takeover" hidden>Tomar el control manual</button>
+            </div>
+            <div class="result-overlay" id="result-overlay" hidden role="status" aria-live="polite"><div class="result-card"><span class="eyebrow" id="result-eyebrow">MISIÓN COMPLETADA</span><h2 id="result-title">En buenas manos.</h2><p id="result-description"></p><div class="result-stats" id="result-stats"></div><button id="retry-button" class="primary-button">Otro vuelo <span aria-hidden="true">↗</span></button><button id="inspect-result" class="text-button">Observar el encuentro</button><button id="result-secondary-button" class="text-button">Practicar aproximación</button></div></div>
           </div>
 
           <div class="telemetry" aria-label="Telemetría en tiempo real">
@@ -55,7 +62,16 @@
           </div>
         </section>
 
-        <aside class="science-panel" aria-label="Física y condiciones de captura">
+        <aside class="science-panel" aria-label="Decisiones, física y condiciones de captura">
+          <section id="automatic-panel" class="automatic-panel" aria-labelledby="automatic-title" hidden>
+            <h2 id="automatic-title" tabindex="-1">Decisiones de OpenAI</h2>
+            <p id="automatic-status" role="status"></p>
+            <ol id="automatic-decisions" class="automatic-decisions"></ol>
+            <div class="automatic-footer">
+              <p id="automatic-usage"></p>
+              <button id="takeover-button" type="button" class="text-button">Tomar el control</button>
+            </div>
+          </section>
           <section class="physics-card"><div class="section-label"><span class="status-dot"></span> FÍSICA DEL INSTANTE <span id="lesson-number">01</span></div><div class="lesson-symbol" id="lesson-symbol" aria-hidden="true">F</div><p class="lesson-category" id="lesson-category">ACCIÓN Y REACCIÓN</p><h2 id="lesson-title">El principio de un viaje.</h2><p class="lesson-copy" id="lesson-copy"></p><div class="equation"><span id="lesson-equation">F = m · a</span><small id="equation-caption">Segunda ley de Newton</small></div><div class="force-list"><div><span><i class="thrust-dot"></i>Empuje vertical</span><strong id="force-thrust">0.0 kN</strong></div><div><span><i class="weight-dot"></i>Peso</span><strong id="force-weight">29.4 kN</strong></div><div><span><i class="drag-dot"></i>Resistencia vertical</span><strong id="force-drag">0.0 kN</strong></div><div id="normal-row"><span><i class="normal-dot"></i><span id="normal-label">Apoyo del suelo</span></span><strong id="force-normal">29.4 kN</strong></div></div><p class="physics-footnote" id="physics-footnote"></p></section>
           <section class="capture-card"><div class="section-label">ENCUENTRO CON LA TORRE <span aria-hidden="true">⌖</span></div><div class="capture-heading"><h2>Una captura suave.</h2><span>100 m</span></div><p>Condiciones al cruzar los brazos en descenso.</p><dl class="capture-conditions"><div><dt>Desviación horizontal</dt><dd><span id="target-offset">−75.0 m</span><small>± 8 m</small></dd></div><div><dt>Velocidad vertical</dt><dd><span id="target-speed">0.0 m/s</span><small>↓ 0–6 m/s</small></dd></div><div><dt>Velocidad horizontal</dt><dd><span id="target-horizontal">0.0 m/s</span><small>≤ 3.5 m/s</small></dd></div><div><dt>Inclinación</dt><dd><span id="target-angle">0.0°</span><small>± 12°</small></dd></div><div><dt>Velocidad de giro</dt><dd><span id="target-rotation">0.0°/s</span><small>≤ 20°/s</small></dd></div></dl><div class="flight-detail"><span>MASA <b id="mass">3 000 kg</b></span><span>FLUJO <b id="flow">0.0 kg/s</b></span></div></section>
         </aside>

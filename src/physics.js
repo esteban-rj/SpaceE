@@ -2,7 +2,7 @@
 export const CONFIG = Object.freeze({
   gravity: 9.81, dryMass: 1800, initialFuel: 1200, maxThrust: 60000,
   specificImpulse: 230, seaLevelDensity: 1.225, scaleHeight: 8500,
-  dragArea: 3.2, rocketHeight: 24, rocketRadius: 3.2,
+  dragArea: 3.2, rocketHeight: 24, rocketRadius: 3.2, launchX: -75,
   targetX: 0, targetY: 100, captureHalfWidth: 8,
   maxCaptureVerticalSpeed: 6, maxCaptureHorizontalSpeed: 3.5,
   maxCaptureAngle: 12 * Math.PI / 180, maxCaptureAngularSpeed: 20 * Math.PI / 180,
@@ -16,12 +16,13 @@ export const massOf = state => CONFIG.dryMass + state.fuel;
 
 export function createState(mode = 'mission') {
   const practice = mode === 'practice';
+  const altitude = practice ? 143 : CONFIG.rocketHeight / 2;
   const state = {
-    mode, x: practice ? -3 : -75, y: practice ? 143 : 12,
+    mode, x: practice ? -3 : CONFIG.launchX, y: altitude,
     vx: practice ? 0.3 : 0, vy: practice ? -4 : 0,
     angle: 0, omega: 0, fuel: practice ? 800 : CONFIG.initialFuel,
     throttle: practice ? 0.42 : 0, time: 0, status: practice ? 'flying' : 'ready',
-    maxAltitude: practice ? 143 : 12, milestone: practice,
+    maxAltitude: altitude, milestone: practice,
     ax: 0, ay: 0, outcome: null, impact: null, capture: null,
     onPad: !practice, lifted: practice,
   };
